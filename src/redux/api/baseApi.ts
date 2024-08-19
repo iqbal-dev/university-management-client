@@ -63,7 +63,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
         })
       );
 
-      // Retry the original query with the new token
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());

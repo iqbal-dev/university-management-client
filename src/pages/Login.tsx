@@ -1,7 +1,9 @@
-import { Button } from "antd";
-import { FieldValues, useForm } from "react-hook-form";
+import { Button, Col, Row } from "antd";
+import { FieldValues } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import PHForm from "../components/form/PHForm";
+import PHInput from "../components/form/PHInput";
 import { useLoginMutation } from "../redux/features/auth/authApi";
 import { setUsers, TUser } from "../redux/features/auth/authSlice";
 import { useAppDispatch } from "../redux/hooks";
@@ -11,17 +13,12 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [login] = useLoginMutation();
-  const { handleSubmit, register } = useForm({
-    defaultValues: {
-      userId: "A-0001",
-      password: "admin123",
-    },
-  });
   const onSubmit = async (data: FieldValues) => {
     const userInfo = {
       id: data.userId,
       password: data.password,
     };
+    console.log("🚀 ~ onSubmit ~ userInfo:", userInfo);
 
     const toastId = toast.loading("logging in");
 
@@ -51,20 +48,27 @@ export default function Login() {
       }
     }
   };
+  const defaultValues = {
+    userId: "A-0001",
+    password: "admin123",
+  };
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>UserID:</label>
-          <input type="text" {...register("userId")} />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input type="text" {...register("password")} />
-        </div>
-        <Button htmlType="submit">Submit</Button>
-      </form>
-    </div>
+    <Row justify="center" align="middle" style={{ height: "100vh" }}>
+      <Col
+        span={8}
+        style={{
+          border: "1px solid #d9d9d9",
+          padding: "20px 30px",
+          borderRadius: "8px",
+        }}
+      >
+        <PHForm onSubmit={onSubmit} defaultValues={defaultValues}>
+          <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h1>
+          <PHInput name="userId" type="text" label="UserId" />
+          <PHInput name="password" type="text" label="Password" />
+          <Button htmlType="submit">Submit</Button>
+        </PHForm>
+      </Col>
+    </Row>
   );
 }
