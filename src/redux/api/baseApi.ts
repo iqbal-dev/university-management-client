@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BaseQueryApi,
   BaseQueryFn,
@@ -11,14 +10,22 @@ import { toast } from "sonner";
 import { logout, setUsers } from "../features/auth/authSlice";
 import { RootState } from "../store";
 
+// Define the response structure for the refresh token endpoint
+type RefreshTokenResponse = {
+  data: {
+    accessToken: string;
+  };
+};
+
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000/api/v1",
   credentials: "include",
-  prepareHeaders: (headers, api) => {
-    const token = (api.getState() as RootState).auth.token;
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token;
     if (token) {
       headers.set("authorization", `${token}`);
     }
+    return headers;
   },
 });
 
@@ -30,38 +37,42 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 404) {
-    toast.error((result.error.data as { message: string }).message);
+    const errorMessage = (result.error.data as { message: string })?.message;
+    toast.error(errorMessage);
   }
+
   if (result?.error?.status === 401) {
-    //* Send Refresh
-    console.log("Sending refresh token");
+    // Make a request to refresh the token using baseQuery
+    const refreshResult = (await baseQuery(
+      {
+        url: "auth/refresh-token",
+        method: "POST",
+      },
+      api,
+      extraOptions
+    )) as { data?: RefreshTokenResponse };
 
-    const res = await fetch("http://localhost:5000/api/v1/auth/refresh-token", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    const data = await res.json();
-
-    if (data?.data?.accessToken) {
+    const accessToken = refreshResult.data?.data.accessToken;
+    if (accessToken) {
       const user = (api.getState() as RootState).auth.user;
 
       api.dispatch(
         setUsers({
           user,
-          token: data.data.accessToken,
+          token: accessToken,
         })
       );
 
+      // Retry the original query with the new token
       result = await baseQuery(args, api, extraOptions);
     } else {
-      console.log(data);
       api.dispatch(logout());
     }
   }
 
   return result;
 };
+
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
