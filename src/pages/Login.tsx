@@ -48,24 +48,30 @@ export default function Login() {
       }
     }
   };
-  const defaultValues = {
-    userId: "A-0001",
-    password: "admin123",
-  };
   return (
     <Row justify="center" align="middle" style={{ height: "100vh" }}>
       <Col
-        span={8}
+        span={6}
         style={{
           border: "1px solid #d9d9d9",
           padding: "20px 30px",
           borderRadius: "8px",
         }}
       >
-        <PHForm onSubmit={onSubmit} defaultValues={defaultValues}>
+        <PHForm onSubmit={onSubmit}>
           <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h1>
-          <PHInput name="userId" type="text" label="UserId" />
-          <PHInput name="password" type="text" label="Password" />
+          <PHInput
+            name="userId"
+            type="text"
+            label="UserId"
+            placeholder="user id"
+          />
+          <PHInput
+            name="password"
+            type="password"
+            label="Password"
+            placeholder="password"
+          />
           <Button htmlType="submit">Submit</Button>
         </PHForm>
       </Col>
