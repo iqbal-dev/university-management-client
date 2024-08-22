@@ -32,10 +32,6 @@ export default function CreateAcademicSemester() {
       const res = (await addAcademicSemester(
         semesterData
       )) as TResponse<TAcademicSemester>;
-      console.log(
-        "🚀 ~ constonSubmit:SubmitHandler<FieldValues>=async ~ res:",
-        res
-      );
       if (res.error) {
         toast.error(res.error.data.message, { id: toastId });
       } else {
