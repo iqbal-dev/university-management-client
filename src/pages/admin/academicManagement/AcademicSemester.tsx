@@ -1,5 +1,8 @@
 import { Table, TableColumnsType, TableProps } from "antd";
 import { useState } from "react";
+import Spinner from "../../../components/shared/spinner";
+import { yearOptions } from "../../../constants";
+import { semesterOptions } from "../../../constants/academicSemester";
 import { useGetAllSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
 import { TAcademicSemester } from "../../../types";
 
@@ -11,39 +14,18 @@ const columns: TableColumnsType<TDataType> = [
   {
     title: "Name",
     dataIndex: "name",
-    showSorterTooltip: { target: "full-header" },
-    filters: [
-      {
-        text: "Autumn",
-        value: "Autumn",
-      },
-      {
-        text: "Fall",
-        value: "Fall",
-      },
-      {
-        text: "Summer",
-        value: "Summer",
-      },
-    ],
+    filters: semesterOptions.map((semester) => ({
+      text: semester.label,
+      value: semester.label,
+    })),
   },
   {
     title: "Year",
     dataIndex: "year",
-    filters: [
-      {
-        text: "2024",
-        value: "2024",
-      },
-      {
-        text: "2025",
-        value: "2025",
-      },
-      {
-        text: "2026",
-        value: "2026",
-      },
-    ],
+    filters: yearOptions.map((year) => ({
+      text: year.label,
+      value: year.value,
+    })),
   },
   {
     title: "Start Month",
@@ -61,7 +43,11 @@ export type TParamsType = {
 };
 export default function AcademicSemester() {
   const [params, setParams] = useState<TParamsType[] | undefined>(undefined);
-  const { data: semesterData } = useGetAllSemesterQuery(params);
+  const {
+    data: semesterData,
+    isFetching,
+    isLoading,
+  } = useGetAllSemesterQuery(params);
   const data = semesterData?.data.map((item) => ({
     _id: item._id,
     name: item.name,
@@ -71,9 +57,9 @@ export default function AcademicSemester() {
   }));
 
   const onChange: TableProps<TDataType>["onChange"] = (
-    pagination,
+    _pagination,
     filters,
-    sorter,
+    _sorter,
     extra
   ) => {
     if (extra.action === "filter") {
@@ -86,13 +72,18 @@ export default function AcademicSemester() {
           });
         });
       });
+
+      console.log("🚀 ~ AcademicSemester ~ items:", items);
       setParams(items);
     }
-    console.log(filters, extra);
   };
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <Table
       columns={columns}
+      loading={isFetching}
       dataSource={data}
       onChange={onChange}
       showSorterTooltip={{ target: "sorter-icon" }}
