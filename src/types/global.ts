@@ -1,4 +1,8 @@
 import { BaseQueryApi } from "@reduxjs/toolkit/query";
+export type TParamsType = {
+  name: string;
+  value: string;
+};
 export type TError = {
   data: {
     message: string;

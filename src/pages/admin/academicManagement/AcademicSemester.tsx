@@ -5,6 +5,7 @@ import { yearOptions } from "../../../constants";
 import { semesterOptions } from "../../../constants/academicSemester";
 import { useGetAllSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
 import { TAcademicSemester } from "../../../types";
+import { TParamsType } from "../../../types/global";
 
 type TDataType = Pick<
   TAcademicSemester,
@@ -37,10 +38,6 @@ const columns: TableColumnsType<TDataType> = [
   },
 ];
 
-export type TParamsType = {
-  name: string;
-  value: string;
-};
 export default function AcademicSemester() {
   const [params, setParams] = useState<TParamsType[] | undefined>(undefined);
   const {
@@ -72,8 +69,6 @@ export default function AcademicSemester() {
           });
         });
       });
-
-      console.log("🚀 ~ AcademicSemester ~ items:", items);
       setParams(items);
     }
   };

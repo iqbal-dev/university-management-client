@@ -16,7 +16,7 @@ export default function PHInput({
     <div style={{ marginBottom: "20px" }}>
       <Controller
         name={name}
-        render={({ field }) => (
+        render={({ field, fieldState: { error } }) => (
           <Form.Item label={label}>
             <Input
               placeholder={placeholder}
@@ -25,6 +25,7 @@ export default function PHInput({
               type={type}
               size="large"
             />
+            {error && <small style={{ color: "red" }}>{error.message}</small>}
           </Form.Item>
         )}
       />

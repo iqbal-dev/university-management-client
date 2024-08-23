@@ -13,12 +13,14 @@ type TFormConfig = {
 type TFormProps = {
   onSubmit: SubmitHandler<FieldValues>;
   children: ReactNode;
+  layout?: "vertical" | "horizontal";
 } & TFormConfig;
 export default function PHForm({
   onSubmit,
   children,
   defaultValues,
   resolver,
+  layout = "vertical",
 }: TFormProps) {
   const formConfig: TFormConfig = {};
   if (defaultValues) {
@@ -31,7 +33,7 @@ export default function PHForm({
   const methods = useForm(formConfig);
   return (
     <FormProvider {...methods}>
-      <Form layout="vertical" onFinish={methods.handleSubmit(onSubmit)}>
+      <Form layout={layout} onFinish={methods.handleSubmit(onSubmit)}>
         {children}
       </Form>
     </FormProvider>
