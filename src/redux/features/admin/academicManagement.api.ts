@@ -1,4 +1,8 @@
-import { TAcademicFaculty, TAcademicSemester } from "../../../types";
+import {
+  TAcademicDepartment,
+  TAcademicFaculty,
+  TAcademicSemester,
+} from "../../../types";
 import { TParamsType, TResponseRedux } from "../../../types/global";
 import { baseApi } from "../../api/baseApi";
 
@@ -89,6 +93,28 @@ const academicSemesterApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+
+    getAllAcademicDepartment: builder.query({
+      query: (data) => {
+        const params = new URLSearchParams();
+        if (data?.length) {
+          data.forEach((item: TParamsType) => {
+            params.append(item.name, item.value);
+          });
+        }
+        return {
+          url: "/academic-departments",
+          method: "GET",
+          params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<TAcademicDepartment[]>) => {
+        return {
+          data: response.data,
+          meta: response.meta,
+        };
+      },
+    }),
   }),
 });
 
@@ -99,4 +125,5 @@ export const {
   useAddAcademicFacultyMutation,
   useGetAllAcademicFacultyDropDownQuery,
   useAddAcademicDepartmentMutation,
+  useGetAllAcademicDepartmentQuery,
 } = academicSemesterApi;
