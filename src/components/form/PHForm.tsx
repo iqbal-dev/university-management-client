@@ -31,9 +31,14 @@ export default function PHForm({
     formConfig["resolver"] = resolver;
   }
   const methods = useForm(formConfig);
+
+  const submit: SubmitHandler<FieldValues> = (data) => {
+    onSubmit(data);
+    methods.reset();
+  };
   return (
     <FormProvider {...methods}>
-      <Form layout={layout} onFinish={methods.handleSubmit(onSubmit)}>
+      <Form layout={layout} onFinish={methods.handleSubmit(submit)}>
         {children}
       </Form>
     </FormProvider>
