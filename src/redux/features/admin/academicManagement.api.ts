@@ -8,7 +8,7 @@ import { baseApi } from "../../api/baseApi";
 
 const academicSemesterApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllSemester: builder.query({
+    getAllAcademicSemester: builder.query({
       query: (data) => {
         const params = new URLSearchParams();
         if (data?.length) {
@@ -22,6 +22,7 @@ const academicSemesterApi = baseApi.injectEndpoints({
           params,
         };
       },
+      providesTags: ["academic-semesters"],
       transformResponse: (response: TResponseRedux<TAcademicSemester[]>) => {
         return {
           data: response.data,
@@ -35,6 +36,7 @@ const academicSemesterApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["academic-semesters"],
     }),
 
     getAllAcademicFaculty: builder.query({
@@ -86,13 +88,6 @@ const academicSemesterApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
-    addAcademicDepartment: builder.mutation({
-      query: (data) => ({
-        url: "/academic-departments/create-academic-department",
-        method: "POST",
-        body: data,
-      }),
-    }),
 
     getAllAcademicDepartment: builder.query({
       query: (data) => {
@@ -108,6 +103,7 @@ const academicSemesterApi = baseApi.injectEndpoints({
           params,
         };
       },
+      providesTags: ["academic-departments"],
       transformResponse: (response: TResponseRedux<TAcademicDepartment[]>) => {
         return {
           data: response.data,
@@ -115,15 +111,46 @@ const academicSemesterApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getAcademicDepartmentById: builder.query({
+      query: (data) => {
+        return {
+          url: `/academic-departments/${data.academicDepartmentId}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (response: TResponseRedux<TAcademicDepartment>) => {
+        return {
+          data: response.data,
+        };
+      },
+    }),
+    createAcademicDepartment: builder.mutation({
+      query: (data) => ({
+        url: "/academic-departments/create-academic-department",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["academic-departments"],
+    }),
+    updateAcademicDepartment: builder.mutation({
+      query: (data) => ({
+        url: `/academic-departments/${data.academicDepartmentId}`,
+        method: "PATCH",
+        body: data.academicDepartment,
+      }),
+      invalidatesTags: ["academic-departments"],
+    }),
   }),
 });
 
 export const {
-  useGetAllSemesterQuery,
+  useGetAllAcademicSemesterQuery,
   useAddAcademicSemesterMutation,
   useGetAllAcademicFacultyQuery,
   useAddAcademicFacultyMutation,
   useGetAllAcademicFacultyDropDownQuery,
-  useAddAcademicDepartmentMutation,
+  useCreateAcademicDepartmentMutation,
+  useUpdateAcademicDepartmentMutation,
+  useGetAcademicDepartmentByIdQuery,
   useGetAllAcademicDepartmentQuery,
 } = academicSemesterApi;

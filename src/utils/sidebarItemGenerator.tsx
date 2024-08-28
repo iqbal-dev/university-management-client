@@ -2,23 +2,24 @@ import { NavLink } from "react-router-dom";
 import { TSidebarItem, TUserPaths } from "../types";
 
 export const sidebarItemGenerator = (
-  items: TUserPaths[],
+  items: TUserPaths[] = [],
   basePath: string
 ): TSidebarItem[] => {
-  return items.map((item) => {
-    const currentPath = item.path ? `${basePath}/${item.path}` : basePath;
+  return items
+    .filter((item) => item.name)
+    .map((item) => {
+      const currentPath = item.path ? `${basePath}/${item.path}` : basePath;
 
-    if (!item.children) {
       return {
         key: currentPath,
-        label: <NavLink to={currentPath}>{item.name}</NavLink>,
+        label: item.children?.length ? (
+          item.name
+        ) : (
+          <NavLink to={currentPath}>{item.name}</NavLink>
+        ),
+        children: item.children?.length
+          ? sidebarItemGenerator(item.children, currentPath)
+          : undefined,
       };
-    }
-
-    return {
-      key: currentPath,
-      label: item.name,
-      children: sidebarItemGenerator(item.children, currentPath),
-    };
-  }) as TSidebarItem[];
+    });
 };

@@ -1,34 +1,26 @@
-import { Form, Select, SelectProps } from "antd";
+import { DatePicker, Form } from "antd";
 import { Controller } from "react-hook-form";
-
-type TSelectProps = {
+type TInputProps = {
   name: string;
   label?: string;
   placeholder?: string;
-  options: SelectProps["options"];
-  size?: "small" | "middle" | "large";
-  disabled?: boolean;
 };
-export default function PHSelect({
+export default function PHDatePicker({
   name,
   label,
   placeholder,
-  options,
-  size = "large",
-  disabled = false,
-}: TSelectProps) {
+}: TInputProps) {
   return (
     <div style={{ marginBottom: "20px" }}>
       <Controller
         name={name}
         render={({ field, fieldState: { error } }) => (
           <Form.Item label={label}>
-            <Select
-              disabled={disabled}
-              size={size}
-              {...field}
+            <DatePicker
               placeholder={placeholder}
-              options={options}
+              {...field}
+              size="large"
+              style={{ width: "100%" }}
             />
             {error && <small style={{ color: "red" }}>{error.message}</small>}
           </Form.Item>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Spinner from "../../../components/shared/spinner";
 import { yearOptions } from "../../../constants";
 import { semesterOptions } from "../../../constants/academicSemester";
-import { useGetAllSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
+import { useGetAllAcademicSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
 import { TAcademicSemester } from "../../../types";
 import { TParamsType } from "../../../types/global";
 
@@ -44,7 +44,7 @@ export default function AcademicSemester() {
     data: semesterData,
     isFetching,
     isLoading,
-  } = useGetAllSemesterQuery(params);
+  } = useGetAllAcademicSemesterQuery(params);
   const data = semesterData?.data.map((item) => ({
     _id: item._id,
     name: item.name,

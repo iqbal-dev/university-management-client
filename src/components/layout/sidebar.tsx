@@ -1,5 +1,6 @@
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
+import { Navigate, useLocation } from "react-router-dom";
 import { selectCurrentUser } from "../../redux/features/auth/authSlice";
 import { useAppSelector } from "../../redux/hooks";
 import { adminPaths } from "../../routers/admin.route";
@@ -14,8 +15,9 @@ const userRole = {
 };
 export default function Sidebar() {
   const user = useAppSelector(selectCurrentUser);
+  const location = useLocation();
   let sidebarItems;
-  switch (user!.role) {
+  switch (user?.role) {
     case userRole.ADMIN:
       sidebarItems = sidebarItemGenerator(adminPaths, `/${user!.role}`);
       break;
@@ -27,16 +29,15 @@ export default function Sidebar() {
       break;
 
     default:
-      break;
+      return <Navigate to="/login" />;
   }
+  const selectedKey = location.pathname;
   return (
     <Sider
       breakpoint="lg"
       collapsedWidth="0"
+      style={{ height: "100vh", position: "sticky", top: "0", left: "0" }}
       onBreakpoint={() => {}}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
     >
       <div
         style={{
@@ -52,7 +53,7 @@ export default function Sidebar() {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={["4"]}
+        selectedKeys={[selectedKey]}
         items={sidebarItems}
       />
     </Sider>

@@ -1,4 +1,29 @@
 import { BaseQueryApi } from "@reduxjs/toolkit/query";
+export type TGender = "male" | "female" | "other";
+export type TBloodGroup =
+  | "A+"
+  | "A-"
+  | "B+"
+  | "B-"
+  | "AB+"
+  | "AB-"
+  | "O+"
+  | "O-";
+
+export type TMonths =
+  | "January"
+  | "February"
+  | "March"
+  | "April"
+  | "May"
+  | "June"
+  | "July"
+  | "August"
+  | "September"
+  | "October"
+  | "November"
+  | "December";
+
 export type TParamsType = {
   name: string;
   value: string;

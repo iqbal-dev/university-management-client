@@ -4,6 +4,7 @@ import AcademicSemester from "../pages/admin/academicManagement/AcademicSemester
 import CreateAcademicDepartment from "../pages/admin/academicManagement/CreateAcademicDepartment";
 import CreateAcademicFaculty from "../pages/admin/academicManagement/CreateAcademicFaculty";
 import CreateAcademicSemester from "../pages/admin/academicManagement/CreateAcademicSemester";
+import UpdateAcademicDepartment from "../pages/admin/academicManagement/UpdateAcademicDepartment";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import CreateAdmin from "../pages/admin/userManagement/CreateAdmin";
 import CreateFaculty from "../pages/admin/userManagement/CreateFaculty";
@@ -44,6 +45,10 @@ export const adminPaths: TUserPaths[] = [
         name: "Create A. Department",
         path: "create-academic-department",
         element: <CreateAcademicDepartment />,
+      },
+      {
+        path: "update-academic-department/:academicDepartmentId",
+        element: <UpdateAcademicDepartment />,
       },
       {
         name: "Academic Department",
