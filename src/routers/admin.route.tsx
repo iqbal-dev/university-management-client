@@ -5,6 +5,8 @@ import CreateAcademicDepartment from "../pages/admin/academicManagement/CreateAc
 import CreateAcademicFaculty from "../pages/admin/academicManagement/CreateAcademicFaculty";
 import CreateAcademicSemester from "../pages/admin/academicManagement/CreateAcademicSemester";
 import UpdateAcademicDepartment from "../pages/admin/academicManagement/UpdateAcademicDepartment";
+import UpdateAcademicFaculty from "../pages/admin/academicManagement/UpdateAcademicFaculty";
+import UpdateAcademicSemester from "../pages/admin/academicManagement/UpdateAcademicSemester";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import CreateAdmin from "../pages/admin/userManagement/CreateAdmin";
 import CreateFaculty from "../pages/admin/userManagement/CreateFaculty";
@@ -32,6 +34,10 @@ export const adminPaths: TUserPaths[] = [
         element: <AcademicSemester />,
       },
       {
+        path: "update-academic-semester/:academicSemesterId",
+        element: <UpdateAcademicSemester />,
+      },
+      {
         name: "Create A. Faculty",
         path: "create-academic-faculty",
         element: <CreateAcademicFaculty />,
@@ -40,6 +46,10 @@ export const adminPaths: TUserPaths[] = [
         name: "Academic Faculty",
         path: "academic-faculty",
         element: <AcademicFaculty />,
+      },
+      {
+        path: "update-academic-faculty/:academicFacultyId",
+        element: <UpdateAcademicFaculty />,
       },
       {
         name: "Create A. Department",

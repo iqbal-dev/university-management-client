@@ -1,43 +1,39 @@
-import {
-  Button,
-  Pagination,
-  Space,
-  Table,
-  TableColumnsType,
-  TableProps,
-} from "antd";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Space } from "antd";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import Spinner from "../../../components/shared/spinner";
-import { useGetAllAcademicDepartmentQuery } from "../../../redux/features/admin/academicManagement.api";
+import DeleteButton from "../../../components/shared/delete-button";
+import EditButton from "../../../components/shared/edit-button";
+import DynamicTable from "../../../components/ui/dynamic-table";
+import { useManageSearchParams } from "../../../hooks/useManageSearchParams";
+import {
+  useDeleteAcademicDepartmentMutation,
+  useGetAllAcademicDepartmentQuery,
+} from "../../../redux/features/admin/academicManagement.api";
 import { TAcademicDepartment } from "../../../types";
 import { TParamsType } from "../../../types/global";
+import { objectToApiParams } from "../../../utils/objectToApiParams";
 
-type TDataType = {
-  name: TAcademicDepartment["name"];
-  academicFaculty: TAcademicDepartment["academicFaculty"]["name"];
-};
-
-export default function AcademicDepartment() {
-  const location = useLocation();
-  const currentPage = Number(location.state?.currentPage) || 1;
-  const [page, setPage] = useState<number>(currentPage);
-  const [params, setParams] = useState<TParamsType[]>([]);
+const AcademicDepartmentList = () => {
+  const { queryParams, updateSearchParams } = useManageSearchParams();
+  const [params, setParams] = useState<TParamsType[] | undefined>(
+    objectToApiParams(queryParams)
+  );
   const {
-    data: academicSemesterData,
+    data: academicDepartmentData,
     isFetching,
     isLoading,
-  } = useGetAllAcademicDepartmentQuery([
-    { name: "page", value: page },
-    ...params,
-  ]);
-  const data = academicSemesterData?.data.map((item) => ({
-    key: item._id,
-    name: item.name,
-    academicFaculty: item.academicFaculty.name,
-  }));
+  } = useGetAllAcademicDepartmentQuery(params);
+  const [deleteData] = useDeleteAcademicDepartmentMutation();
 
-  const columns: TableColumnsType<TDataType> = [
+  // Transform the fetched data for display in the table
+  const transformAcademicDepartmentData = (data: any) =>
+    data?.data.map((item: TAcademicDepartment) => ({
+      key: item._id,
+      name: item.name,
+      academicFaculty: item.academicFaculty.name,
+    }));
+
+  const columns = [
     {
       title: "Name",
       dataIndex: "name",
@@ -48,64 +44,35 @@ export default function AcademicDepartment() {
       dataIndex: "academicFaculty",
       key: "academicFaculty",
     },
-
-    {
-      title: "Action",
-      key: "x",
-      render: (item) => {
-        return (
-          <Space>
-            <Link
-              to={`/admin/academic-management/update-academic-department/${item.key}`}
-              state={{ page }}
-            >
-              <Button>Update</Button>
-            </Link>
-            <Button>Delete</Button>
-          </Space>
-        );
-      },
-      width: "1%",
-    },
   ];
-
-  const onChange: TableProps<TDataType>["onChange"] = (
-    _pagination,
-    filters,
-    _sorter,
-    extra
-  ) => {
-    if (extra.action === "filter") {
-      const items: TParamsType[] = [];
-      Object.keys(filters).forEach((key) => {
-        filters[key]?.forEach((item) => {
-          items.push({
-            name: key,
-            value: item as string,
-          });
-        });
-      });
-      setParams(items);
-    }
+  const handleDelete = (id: string) => {
+    deleteData({ academicDepartmentId: id });
   };
-  if (isLoading) {
-    return <Spinner />;
-  }
-  return (
-    <>
-      <Table
-        columns={columns}
-        loading={isFetching}
-        dataSource={data}
-        onChange={onChange}
-        pagination={false}
+  const itemActions = (item: any) => (
+    <Space>
+      <EditButton
+        link={`/admin/academic-management/update-academic-department/${item.key}`}
       />
-      <Pagination
-        current={page}
-        total={academicSemesterData?.meta?.total}
-        pageSize={academicSemesterData?.meta?.limit}
-        onChange={(page) => setPage(page)}
-      />
-    </>
+      <DeleteButton id={item.key} deleteFunc={handleDelete} />
+    </Space>
   );
-}
+
+  return (
+    <DynamicTable
+      title="Academic Departments"
+      fetchResult={{
+        data: academicDepartmentData,
+        isFetching,
+        isLoading,
+      }}
+      columns={columns}
+      transformData={transformAcademicDepartmentData}
+      itemActions={itemActions}
+      queryParams={queryParams}
+      setParams={setParams}
+      updateSearchParams={updateSearchParams}
+    />
+  );
+};
+
+export default AcademicDepartmentList;

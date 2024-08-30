@@ -30,6 +30,34 @@ const academicSemesterApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getAcademicSemester: builder.query({
+      query: (data) => {
+        return {
+          url: `/academic-semesters/${data.academicSemesterId}`,
+          method: "GET",
+        };
+      },
+      transformResponse: (response: TResponseRedux<TAcademicSemester>) => {
+        return {
+          data: response.data,
+        };
+      },
+    }),
+    updateAcademicSemester: builder.mutation({
+      query: (data) => ({
+        url: `/academic-semesters/${data.academicSemesterId}`,
+        method: "PATCH",
+        body: data.academicSemester,
+      }),
+      invalidatesTags: ["academic-semesters"],
+    }),
+    deleteAcademicSemester: builder.mutation({
+      query: (data) => ({
+        url: `/academic-semesters/${data.academicSemesterId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["academic-semesters"],
+    }),
     addAcademicSemester: builder.mutation({
       query: (data) => ({
         url: "/academic-semesters/create-academic-semester",
@@ -38,7 +66,6 @@ const academicSemesterApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["academic-semesters"],
     }),
-
     getAllAcademicFaculty: builder.query({
       query: (data) => {
         const params = new URLSearchParams();
@@ -53,10 +80,25 @@ const academicSemesterApi = baseApi.injectEndpoints({
           params,
         };
       },
+      providesTags: ["academic-faculties"],
       transformResponse: (response: TResponseRedux<TAcademicSemester[]>) => {
         return {
           data: response.data,
           meta: response.meta,
+        };
+      },
+    }),
+    getAcademicFaculty: builder.query({
+      query: (data) => {
+        return {
+          url: `/academic-faculties/${data.academicFacultyId}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["academic-faculties"],
+      transformResponse: (response: TResponseRedux<TAcademicSemester>) => {
+        return {
+          data: response.data,
         };
       },
     }),
@@ -88,7 +130,21 @@ const academicSemesterApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
-
+    updateAcademicFaculty: builder.mutation({
+      query: (data) => ({
+        url: `/academic-faculties/${data.academicFacultyId}`,
+        method: "PATCH",
+        body: data.academicFaculty,
+      }),
+      invalidatesTags: ["academic-faculties"],
+    }),
+    deleteAcademicFaculty: builder.mutation({
+      query: (data) => ({
+        url: `/academic-faculties/${data.academicFacultyId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["academic-faculties"],
+    }),
     getAllAcademicDepartment: builder.query({
       query: (data) => {
         const params = new URLSearchParams();
@@ -123,6 +179,7 @@ const academicSemesterApi = baseApi.injectEndpoints({
           data: response.data,
         };
       },
+      providesTags: ["academic-departments"],
     }),
     createAcademicDepartment: builder.mutation({
       query: (data) => ({
@@ -140,17 +197,32 @@ const academicSemesterApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["academic-departments"],
     }),
+    deleteAcademicDepartment: builder.mutation({
+      query: (data) => ({
+        url: `/academic-departments/${data.academicDepartmentId}`,
+        method: "DELETE",
+        body: data.academicDepartment,
+      }),
+      invalidatesTags: ["academic-departments"],
+    }),
   }),
 });
 
 export const {
   useGetAllAcademicSemesterQuery,
+  useGetAcademicSemesterQuery,
+  useUpdateAcademicSemesterMutation,
+  useDeleteAcademicSemesterMutation,
   useAddAcademicSemesterMutation,
   useGetAllAcademicFacultyQuery,
+  useGetAcademicFacultyQuery,
   useAddAcademicFacultyMutation,
   useGetAllAcademicFacultyDropDownQuery,
+  useDeleteAcademicFacultyMutation,
+  useUpdateAcademicFacultyMutation,
   useCreateAcademicDepartmentMutation,
   useUpdateAcademicDepartmentMutation,
   useGetAcademicDepartmentByIdQuery,
   useGetAllAcademicDepartmentQuery,
+  useDeleteAcademicDepartmentMutation,
 } = academicSemesterApi;

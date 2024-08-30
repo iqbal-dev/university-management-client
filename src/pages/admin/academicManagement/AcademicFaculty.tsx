@@ -1,9 +1,17 @@
-import { Table, TableColumnsType, TableProps } from "antd";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Space, TableColumnsType } from "antd";
 import { useState } from "react";
-import Spinner from "../../../components/shared/spinner";
-import { useGetAllAcademicFacultyQuery } from "../../../redux/features/admin/academicManagement.api";
-import { TAcademicSemester } from "../../../types";
+import DeleteButton from "../../../components/shared/delete-button";
+import EditButton from "../../../components/shared/edit-button";
+import DynamicTable from "../../../components/ui/dynamic-table";
+import { useManageSearchParams } from "../../../hooks/useManageSearchParams";
+import {
+  useDeleteAcademicFacultyMutation,
+  useGetAllAcademicFacultyQuery,
+} from "../../../redux/features/admin/academicManagement.api";
+import { TAcademicFaculty, TAcademicSemester } from "../../../types";
 import { TParamsType } from "../../../types/global";
+import { objectToApiParams } from "../../../utils/objectToApiParams";
 
 type TDataType = Pick<TAcademicSemester, "name">;
 const columns: TableColumnsType<TDataType> = [
@@ -14,45 +22,49 @@ const columns: TableColumnsType<TDataType> = [
 ];
 
 export default function AcademicFaculty() {
-  const [params, setParams] = useState<TParamsType[] | undefined>(undefined);
+  const { queryParams, updateSearchParams } = useManageSearchParams();
+  const [deleteAcademicFaculty] = useDeleteAcademicFacultyMutation();
+  const [params, setParams] = useState<TParamsType[] | undefined>(
+    objectToApiParams(queryParams)
+  );
   const {
-    data: semesterData,
+    data: academicFaculty,
     isFetching,
     isLoading,
   } = useGetAllAcademicFacultyQuery(params);
-  const data = semesterData?.data.map((item) => ({
-    key: item._id,
-    name: item.name,
-  }));
 
-  const onChange: TableProps<TDataType>["onChange"] = (
-    _pagination,
-    filters,
-    _sorter,
-    extra
-  ) => {
-    if (extra.action === "filter") {
-      const items: TParamsType[] = [];
-      Object.keys(filters).forEach((key) => {
-        filters[key]?.forEach((item) => {
-          items.push({
-            name: key,
-            value: item as string,
-          });
-        });
-      });
-      setParams(items);
-    }
+  const transformAcademicDepartmentData = (data: any) =>
+    data?.data.map((item: TAcademicFaculty) => ({
+      key: item._id,
+      name: item.name,
+    }));
+
+  const handleDelete = (id: string) => {
+    deleteAcademicFaculty({ academicFacultyId: id });
   };
-  if (isLoading) {
-    return <Spinner />;
-  }
+  const itemActions = (item: any) => (
+    <Space>
+      <EditButton
+        link={`/admin/academic-management/update-academic-faculty/${item.key}`}
+      />
+      <DeleteButton id={item.key} deleteFunc={handleDelete} />
+    </Space>
+  );
+
   return (
-    <Table
+    <DynamicTable
+      title="Academic Faculty"
+      fetchResult={{
+        data: academicFaculty,
+        isFetching,
+        isLoading,
+      }}
       columns={columns}
-      loading={isFetching}
-      dataSource={data}
-      onChange={onChange}
+      transformData={transformAcademicDepartmentData}
+      itemActions={itemActions}
+      queryParams={queryParams}
+      updateSearchParams={updateSearchParams}
+      setParams={setParams}
     />
   );
 }

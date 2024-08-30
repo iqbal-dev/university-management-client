@@ -32,8 +32,8 @@ export default function PHForm({
   }
   const methods = useForm(formConfig);
 
-  const submit: SubmitHandler<FieldValues> = (data) => {
-    onSubmit(data);
+  const submit: SubmitHandler<FieldValues> = async (data) => {
+    await onSubmit(data);
     methods.reset();
   };
   return (
